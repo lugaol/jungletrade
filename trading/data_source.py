@@ -2,6 +2,7 @@ from trading import Order
 from trading.trade_currency import TradeCurrency
 from trading.api import Poloniex
 from trading import OrderHistory
+from trading import Plot
 from datetime import datetime, timedelta
 from time import time
 
@@ -33,6 +34,9 @@ class IDataSource:
         raise NotImplementedError()
 
     def sell(self, alt):
+        raise NotImplementedError()
+
+    def plot_result(self):
         raise NotImplementedError()
 
     @staticmethod
@@ -74,7 +78,8 @@ class IDataSource:
 
 
 class BacktestDataSource(IDataSource):
-    all_data = []
+    backtest_data = []
+    backtest_ticker = 0
     data = []
     data_offset = 0
     update_interval = 5
@@ -83,12 +88,12 @@ class BacktestDataSource(IDataSource):
         super().__init__(currency)
         assert isinstance(poloniex, Poloniex)
 
+        self.backtest_ticker = 0
         self.update_interval = update_interval
         balances = poloniex.returnBalances()
-        self.all_data = poloniex.returnChartData(currencyPair=self.currency.currency_pair, period=self.update_interval * 60, start=start)
-
-        self.data_offset = int(data_offset / update_interval)
-        self.data = self.all_data[:self.data_offset]
+        self.backtest_data = poloniex.returnChartData(currencyPair=self.currency.currency_pair, period=self.update_interval * 60, start=start)
+        self.data_offset = 288 # 1 day sample
+        self.data = self.backtest_data[:(len(self.backtest_data)-self.data_offset)]
         self.highest_bid = self.lowest_ask = self.data[-1]['close']
 
         self.main_balance_init = float(balances[self.symbol_main])
@@ -97,11 +102,12 @@ class BacktestDataSource(IDataSource):
         self.alt_balance = float(balances[self.symbol_alt])
 
     def update(self):
-        if len(self.all_data) <= self.data_offset:
+        if self.backtest_ticker >= self.data_offset:
             return False
+        else:
+            self.backtest_ticker += 1
 
-        self.all_data = self.all_data[1:]
-        self.data = self.all_data[:self.data_offset]
+        self.data = self.backtest_data[:(len(self.backtest_data)-self.data_offset+self.backtest_ticker)]
         self.highest_bid = self.lowest_ask = self.data[-1]['close']
 
         return True
@@ -127,6 +133,11 @@ class BacktestDataSource(IDataSource):
             return order
 
         return None
+
+    def plot_result(self):
+        plot = Plot(self.all_data, self.orders, self.currency.currency_pair)
+        plot.graph_data()
+
 
     def trade_history(self):
         return self.orders

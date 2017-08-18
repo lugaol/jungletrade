@@ -129,7 +129,7 @@ def main():
         total_profit = 0
 
         #MODE: 'BACKTEST' 'LIVE'
-        mode = 'LIVE'
+        mode = 'BACKTEST'
 
         for currency in trade_currencies:
             if mode == 'LIVE':
@@ -143,11 +143,12 @@ def main():
                 source = BacktestDataSource(currency, poloniex, start, offset, update_interval / 60)
                 algorithm = SimpleStrategy(source, offset)
 
+                #source.plot_result()
+
                 print('updating ' + currency.currency_pair)
                 print(template.format('initial balances:', '$' + "{0:.2f}".format(source.main_balance), str(source.alt_balance)))
                 while algorithm.update():
                     continue
-
                 total_main = 0
                 total_alt = 0
                 total_fee = 0
