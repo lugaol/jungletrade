@@ -124,14 +124,15 @@ def main():
         print('initializing')
         poloniex = Poloniex(api_key, api_secret)
 
-        offset = 60 * 24 * 2
+        offset = 60 * 24 * 2 #2 Days Offset
         start = datetime.now() - timedelta(days=31)
-        total_profit = 0
 
         #MODE: 'BACKTEST' 'LIVE'
         mode = 'BACKTEST'
 
         for currency in trade_currencies:
+            total_profit = 0
+
             if mode == 'LIVE':
                 for currency in trade_currencies:
                     source = LiveDataSource(currency, poloniex, start, offset, update_interval / 60)
@@ -139,14 +140,14 @@ def main():
                     update_loop(algorithm)
                     time.sleep(10)
             if mode == 'BACKTEST':
-                print('\n\ngathering source for ' + currency.currency_pair)
+                print('\n\nBackTest Mode - Gathering Data for ' + currency.currency_pair)
                 source = BacktestDataSource(currency, poloniex, start, offset, update_interval / 60)
                 algorithm = SimpleStrategy(source, offset)
 
                 #source.plot_result()
 
-                print('updating ' + currency.currency_pair)
-                print(template.format('initial balances:', '$' + "{0:.2f}".format(source.main_balance), str(source.alt_balance)))
+                print('Updating... ' + currency.currency_pair)
+                print(template.format('Initial Balances:', '$' + "{0:.2f}".format(source.main_balance), str(source.alt_balance)))
                 while algorithm.update():
                     continue
                 total_main = 0
@@ -165,15 +166,16 @@ def main():
                 highest_bid = float(poloniex.returnTicker()[currency.currency_pair]['highestBid'])
                 profit = (alt_profit * highest_bid) + main_profit
                 total_profit += profit
-                print(template.format('final balances:', '$' + "{0:.2f}".format(algorithm.data_source.main_balance), str(algorithm.data_source.alt_balance)))
-                print(template.format('difference:', '$' + "{0:.2f}".format(main_profit), str(alt_profit)))
-                print(template.format('total moved:', '$' + "{0:.2f}".format(total_main), str(total_alt)))
-                print('accuracy: ' + "{0:.2f}".format(accuracy) + '%')
-                print('fees: $' + "{0:.2f}".format(total_fee))
-                print('Winning Trades: ' + str(algorithm.winning_trades))
-                print('Losing Trades: ' + str(algorithm.losing_trades))
-                print('profit $' + "{0:.2f}".format(profit))
-            print('\n\ntotal profit: $' + "{0:.2f}".format(total_profit))
+
+                print(template.format('Final Balances:', '$' + "{0:.2f}".format(algorithm.data_source.main_balance), str(algorithm.data_source.alt_balance)))
+                print(template.format('Difference:', '$' + "{0:.2f}".format(main_profit), str(alt_profit)))
+                print(template.format('Total Moved:', '$' + "{0:.2f}".format(total_main), str(total_alt)))
+                print(template.format('Accuracy: ' , '%' + "{0:.2f}".format(accuracy), str(total_alt)))
+                print(template.format('Fees:' , '$' + "{0:.2f}".format(total_fee), str(total_alt)))
+                print(template.format('Winning Trades:' , str(algorithm.winning_trades), str(total_alt)))
+                print(template.format('Losing  Trades:' , str(algorithm.losing_trades), str(total_alt)))
+                print(template.format('Profit:' , '$' + "{0:.2f}".format(profit), str(total_alt)))
+                print(template.format('Total Profit:', '$' + "{0:.2f}".format(profit), str(total_profit)))
 
     except KeyboardInterrupt:
         quit()
