@@ -1,19 +1,14 @@
 # THIS VERSION IS FOR PYTHON 3 #
-import urllib.error
-import urllib.parse
-import urllib.request
 
 import matplotlib
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-from trading.mpl_finance import candlestick2_ohlc
 import numpy as np
-import datetime
 import pylab
+from matplotlib.dates import HourLocator, DateFormatter
 
-from trading.mpl_finance import candlestick_ohlc
-from matplotlib.dates import MinuteLocator, HourLocator, DateFormatter
+from trading.esssencial.mpl_finance import candlestick2_ohlc
 
 
 class Plot:

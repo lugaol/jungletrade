@@ -1,10 +1,12 @@
-from trading import Order
-from trading.trade_currency import TradeCurrency
-from trading.api import Poloniex
-from trading import OrderHistory
-from trading import Plot
 from datetime import datetime, timedelta
 from time import time
+
+from trading.model.order import Order
+from trading.model.order_history import OrderHistory
+from trading.esssencial.plot import Plot
+from trading.esssencial.api import Poloniex
+from trading.model.trade_currency import TradeCurrency
+
 
 class IDataSource:
     currency = None
@@ -94,8 +96,8 @@ class BacktestDataSource(IDataSource):
         self.backtest_data = poloniex.returnChartData(currencyPair=self.currency.currency_pair, period=self.update_interval * 60, start=start)
         self.data_offset = 288 # 1 day sample
         self.data = self.backtest_data[:(len(self.backtest_data)-self.data_offset)]
-        self.highest_bid = self.lowest_ask = self.data[-1]['close']
 
+        self.highest_bid = self.lowest_ask = self.data[-1]['close']
         self.main_balance_init = float(balances[self.symbol_main])
         self.alt_balance_init = float(balances[self.symbol_alt])
         self.main_balance = float(balances[self.symbol_main])
@@ -137,7 +139,6 @@ class BacktestDataSource(IDataSource):
     def plot_result(self):
         plot = Plot(self.all_data, self.orders, self.currency.currency_pair)
         plot.graph_data()
-
 
     def trade_history(self):
         return self.orders
@@ -216,6 +217,10 @@ class LiveDataSource(IDataSource):
 
             self.sell_order = order
             return self.sell_order
+
+    def plot_result(self):
+        plot = Plot(self.all_data, self.orders, self.currency.currency_pair)
+        plot.graph_data()
 
     def trade_history(self):
         return self.orders

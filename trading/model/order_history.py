@@ -1,4 +1,5 @@
-from trading import Poloniex, Order
+from trading.esssencial.api import Poloniex
+from trading.model.order import Order
 from datetime import datetime, timedelta
 
 

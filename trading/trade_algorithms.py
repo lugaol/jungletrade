@@ -1,12 +1,9 @@
-from trading import Poloniex, Trade, Order, OrderHistory
-from trading.data_source import IDataSource
-from trading.trade_currency import TradeCurrency
-from trading.logger import log
-from datetime import datetime, timedelta
-from enum import Enum
-import math
-
 import copy
+import math
+from enum import Enum
+
+from trading.model.data_source import IDataSource
+
 
 class TradeResult(Enum):
     none = 0

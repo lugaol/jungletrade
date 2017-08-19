@@ -1,6 +1,6 @@
-from trading import Poloniex, OrderHistory
-from trading.logger import log
 import time
+
+from trading import Poloniex, OrderHistory
 
 
 class Trade:

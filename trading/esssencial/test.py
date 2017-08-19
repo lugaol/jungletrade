@@ -1,14 +1,16 @@
 # THIS VERSION IS FOR PYTHON 3 #
-import urllib.request, urllib.error, urllib.parse
-import time
-import datetime
-import numpy as np
+import urllib.error
+import urllib.parse
+import urllib.request
+
+import matplotlib
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
-import matplotlib.dates as mdates
-from trading.mpl_finance import candlestick_ohlc
-import matplotlib
+import numpy as np
 import pylab
+
+from trading.esssencial.mpl_finance import candlestick_ohlc
 
 matplotlib.rcParams.update({'font.size': 9})
 

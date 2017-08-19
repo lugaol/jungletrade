@@ -7,8 +7,11 @@ from datetime import datetime, timedelta
 
 from configparser import ConfigParser
 
-from trading import Poloniex,log, Order, TradeCurrency
-from trading import BacktestDataSource,LiveDataSource
+from trading.esssencial.logger import log
+from trading.esssencial.api import Poloniex
+from trading.model.order import Order
+from trading.model.trade_currency import TradeCurrency
+from trading.model.data_source import BacktestDataSource,LiveDataSource
 from trading import ITradeAlgorithm, ANN, SniperBacktest, MACD, MyTradeAlgorithm, SimpleStrategy
 
 api_key = ''
